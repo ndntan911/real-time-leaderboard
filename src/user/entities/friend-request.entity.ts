@@ -12,10 +12,10 @@ export class FriendRequest {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, (user) => user.sentFriendRequests)
 	sender: User;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, (user) => user.receivedFriendRequests)
 	receiver: User;
 
 	@Column({ default: 'pending' })

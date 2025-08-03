@@ -24,13 +24,15 @@ import {
 import { ResponseUtil } from '../common/utils/response.util';
 import { FriendRequestDto } from './dto/friend-request.dto';
 import { SendMessageDto } from './dto/send-message.dto';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @Serialize(UserDto)
 @UseGuards(JWTAuthGuard)
-@Controller('user')
+@Controller('users')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@UseGuards(AdminGuard)
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) {
 		try {
@@ -41,16 +43,25 @@ export class UserController {
 		}
 	}
 
-	@Get('')
-	async find(@Query('email') email: string) {
+	@Get('me')
+	getCurrentUser(@CurrentUser() user: User) {
+		return ResponseUtil.success(user, 'Current user retrieved successfully');
+	}
+
+	@Patch('me')
+	async updateMe(
+		@CurrentUser() user: User,
+		@Body() updateUserDto: UpdateUserDto,
+	) {
 		try {
-			const user = await this.userService.find(email);
-			return ResponseUtil.success(user, 'User found successfully');
+			const updatedUser = await this.userService.update(user.id, updateUserDto);
+			return ResponseUtil.success(updatedUser, 'User updated successfully');
 		} catch (error) {
-			throw new NotFoundException(error.message);
+			throw new BadRequestException(error.message);
 		}
 	}
 
+	@UseGuards(AdminGuard)
 	@Patch(':id')
 	async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
 		try {
@@ -61,6 +72,7 @@ export class UserController {
 		}
 	}
 
+	@UseGuards(AdminGuard)
 	@Delete(':id')
 	async remove(@Param('id') id: string) {
 		try {
@@ -69,11 +81,6 @@ export class UserController {
 		} catch (error) {
 			throw new BadRequestException(error.message);
 		}
-	}
-
-	@Get('me')
-	getCurrentUser(@CurrentUser() user: User) {
-		return ResponseUtil.success(user, 'Current user retrieved successfully');
 	}
 
 	@Get('/ranking')
@@ -207,6 +214,19 @@ export class UserController {
 			);
 		} catch (error) {
 			throw new BadRequestException(error.message);
+		}
+	}
+
+	@Get(':email')
+	async find(@Param('email') email: string) {
+		try {
+			const user = await this.userService.find(email);
+			if (!user) {
+				throw new NotFoundException('User not found');
+			}
+			return ResponseUtil.success(user, 'User found successfully');
+		} catch (error) {
+			throw new NotFoundException(error.message);
 		}
 	}
 }

@@ -9,6 +9,7 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { Message } from './entities/message.entity';
 import { BadRequestException } from 'src/common/exceptions/application.exceptions';
 import { MessageGateway } from 'src/websocket/message.gateway';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -40,6 +41,9 @@ export class UserService {
 	async update(id: number, updateUserDto: UpdateUserDto) {
 		const user = await this.userRepo.findOneBy({ id });
 		if (!user) throw new NotFoundException('user not found');
+		updateUserDto.password
+			? (updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10))
+			: null;
 		Object.assign(user, updateUserDto);
 		return await this.userRepo.save(user);
 	}
@@ -52,7 +56,7 @@ export class UserService {
 	}
 
 	async getRanking(gameName: string, username: string) {
-		const leaderboardKey = `leaderboard:game: ${gameName}`;
+		const leaderboardKey = `leaderboard:game:${gameName}`;
 		console.log('leaderboardKey:', leaderboardKey);
 		console.log('username:', username);
 
@@ -68,7 +72,7 @@ export class UserService {
 	}
 
 	async getTopPlayers(gameName: string) {
-		const leaderboardKey = `leaderboard:game: ${gameName}`;
+		const leaderboardKey = `leaderboard:game:${gameName}`;
 		const leaderboard = await this.RedisService.getLeaderboard(leaderboardKey);
 		console.log(leaderboard);
 		return leaderboard.map((player, index) => {

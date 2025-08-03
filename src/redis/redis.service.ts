@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService {
-	private readonly client: Redis;
-	constructor() {
-		this.client = new Redis();
-	}
+	constructor(
+		@Inject('REDIS_CLIENT') private readonly client: Redis, // ✅ Injecting the authenticated client
+	) {}
 
 	async setRefreshToken(userId: number, refreshToken: string) {
 		await this.client.set(`${userId}`, refreshToken, 'EX', 7 * 24 * 60 * 60);
@@ -53,8 +52,7 @@ export class RedisService {
 		return rank + 1;
 	}
 
-	async getLeaderboard(gameName: string) {
-		const leaderboardKey = `leaderboard:game: ${gameName}`;
+	async getLeaderboard(leaderboardKey: string) {
 		return this.client.zrevrange(leaderboardKey, 0, -1, 'WITHSCORES');
 	}
 }

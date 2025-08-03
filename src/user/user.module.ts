@@ -7,9 +7,13 @@ import { RedisService } from '../redis/redis.service';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Message } from './entities/message.entity';
 import { MessageGateway } from 'src/websocket/message.gateway';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User, FriendRequest, Message])],
+	imports: [
+		TypeOrmModule.forFeature([User, FriendRequest, Message]),
+		RedisModule,
+	],
 	controllers: [UserController],
 	providers: [UserService, RedisService, MessageGateway],
 	exports: [UserService],

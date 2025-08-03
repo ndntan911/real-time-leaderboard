@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 	cors: {
 		origin: '*',
 	},
+	namespace: '/message',
 })
 export class MessageGateway
 	implements OnGatewayConnection, OnGatewayDisconnect
@@ -37,11 +38,12 @@ export class MessageGateway
 
 	@SubscribeMessage('register')
 	handleRegister(client: Socket, userId: number) {
-		this.userSocketMap.set(userId, client.id);
+		this.userSocketMap.set(+userId, client.id);
 	}
 
 	emitNewMessage(message: any) {
 		const receiverSocketId = this.userSocketMap.get(message.receiver.id);
+
 		if (receiverSocketId) {
 			this.server.to(receiverSocketId).emit('newMessage', message);
 		}

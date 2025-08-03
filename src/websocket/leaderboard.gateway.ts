@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 	cors: {
 		origin: '*',
 	},
+	namespace: '/leaderboard',
 })
 export class LeaderboardGateway
 	implements OnGatewayConnection, OnGatewayDisconnect

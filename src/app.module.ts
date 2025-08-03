@@ -13,6 +13,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { TournamentModule } from './tournament/tournament.module';
+import { WebSocketModule } from './websocket/websocket.module';
 
 @Module({
 	imports: [
@@ -41,6 +42,7 @@ import { TournamentModule } from './tournament/tournament.module';
 			},
 		]),
 		TournamentModule,
+		WebSocketModule,
 	],
 	controllers: [AppController],
 	providers: [
