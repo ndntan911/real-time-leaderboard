@@ -6,10 +6,6 @@
 
 The Real-Time Leaderboard project is a backend service designed to manage and display real-time leaderboards for various games. It provides a comprehensive set of features for user authentication, game management, and score tracking. Users can sign up, log in, and submit their scores, which are then used to generate dynamic leaderboards. The service includes robust authentication and authorization mechanisms, ensuring secure access to protected routes. It leverages technologies like TypeScript, NestJS, TypeORM, PostgreSQL, and Redis to deliver high performance and scalability. Additionally.
 
-## Project URL
-
-https://roadmap.sh/projects/realtime-leaderboard-system
-
 ## Features
 
 - User authentication and authorization
@@ -262,12 +258,3 @@ Make sure to replace the placeholders with your actual credentials and values fo
   - Description: Get the leaderboard for a specific game.
   - Query: `gameName`
   - Headers: `Authorization: Bearer <token>`
-
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add some feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Open a pull request.
